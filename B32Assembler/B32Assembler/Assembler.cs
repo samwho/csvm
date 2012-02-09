@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 
 namespace B32Assembler
 {
-    public partial class frmMainForm : Form
+    public class Assembler
     {
-        private string SourceProgram;
-        private System.Collections.Hashtable LabelTable;
-        private int CurrentNdx;
-        private ushort AsLength;
-        private bool IsEnd;
-        private ushort ExecutionAddress;
+        private static string SourceProgram;
+        private static System.Collections.Hashtable LabelTable;
+        private static int CurrentNdx;
+        private static ushort AsLength;
+        private static bool IsEnd;
+        private static ushort ExecutionAddress;
 
         private enum Registers
         {
@@ -28,61 +24,38 @@ namespace B32Assembler
             Y = 8
         }
 
-        public frmMainForm()
+        public static void Assemble(string infile, string outfile, string origin)
         {
-            InitializeComponent();
-
-            LabelTable = new System.Collections.Hashtable(50);
             CurrentNdx = 0;
-            AsLength = 0;
-            ExecutionAddress = 0;
+            AsLength = Convert.ToUInt16(origin, 16);
             IsEnd = false;
-            SourceProgram = "";
-            txtOrigin.Text = "1000";
-        }
-
-        private void btnSourceBrowse_Click(object sender, EventArgs e)
-        {
-            this.fdSourceFile.ShowDialog();
-            this.txtSourceFileName.Text = fdSourceFile.FileName;
-        }
-
-        private void btnOutputBrowse_Click(object sender, EventArgs e)
-        {
-            this.fdDestinationFile.ShowDialog();
-            this.txtOutputFileName.Text = fdDestinationFile.FileName;
-        }
-
-        private void btnAssemble_Click(object sender, EventArgs e)
-        {
-            AsLength = Convert.ToUInt16(this.txtOrigin.Text, 16);
+            ExecutionAddress = 0;
+            LabelTable = new System.Collections.Hashtable(50);
 
             System.IO.BinaryWriter output;
             System.IO.TextReader input;
-            System.IO.FileStream fs = new
-            System.IO.FileStream(this.txtOutputFileName.Text, System.IO.FileMode.Create);
+            System.IO.FileStream fs = new System.IO.FileStream(outfile, System.IO.FileMode.Create);
 
             output = new System.IO.BinaryWriter(fs);
 
-            input = System.IO.File.OpenText(this.txtSourceFileName.Text);
+            input = System.IO.File.OpenText(infile);
             SourceProgram = input.ReadToEnd();
             input.Close();
 
             output.Write('B');
             output.Write('3');
             output.Write('2');
-            output.Write(Convert.ToUInt16(this.txtOrigin.Text, 16));
+            output.Write(Convert.ToUInt16(origin, 16));
             output.Write((ushort)0);
-            Parse(output);
+            Parse(output, origin);
 
             output.Seek(5, System.IO.SeekOrigin.Begin);
             output.Write(ExecutionAddress);
             output.Close();
             fs.Close();
-            MessageBox.Show("Done!");
         }
 
-        private void Parse(System.IO.BinaryWriter OutputFile)
+        private static void Parse(System.IO.BinaryWriter OutputFile, string origin)
         {
             CurrentNdx = 0;
             while (IsEnd == false)
@@ -90,14 +63,14 @@ namespace B32Assembler
 
             IsEnd = false;
             CurrentNdx = 0;
-            AsLength = Convert.ToUInt16(this.txtOrigin.Text, 16);
+            AsLength = Convert.ToUInt16(origin, 16);
 
             while (IsEnd == false)
                 LabelScan(OutputFile, false);
 
         }
 
-        private void LabelScan(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void LabelScan(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
 
             if (char.IsLetter(SourceProgram[CurrentNdx]))
@@ -114,7 +87,7 @@ namespace B32Assembler
 
         }
 
-        private void ReadMneumonic(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void ReadMneumonic(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             string Mneumonic = "";
 
@@ -159,20 +132,24 @@ namespace B32Assembler
             if (Mneumonic.ToUpper() == "ADDB") InterpretADDB(OutputFile, IsLabelScan);
             if (Mneumonic.ToUpper() == "ADDAB") InterpretADDAB(OutputFile, IsLabelScan);
 
-            if (Mneumonic.ToUpper() == "END") {
+            if (Mneumonic.ToUpper() == "END")
+            {
                 IsEnd = true;
-                DoEnd(OutputFile, IsLabelScan); EatWhiteSpaces(); ExecutionAddress = (ushort)LabelTable[(GetLabelName())]; 
+                DoEnd(OutputFile, IsLabelScan); 
+                EatWhiteSpaces(); 
+                ExecutionAddress = (ushort)LabelTable[(GetLabelName())];
                 return;
             }
 
-            while (SourceProgram[CurrentNdx] != '\n') {
+            while (SourceProgram[CurrentNdx] != '\n')
+            {
                 CurrentNdx++;
             }
             CurrentNdx++;
 
         }
 
-        private void InterpretLDA(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretLDA(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
@@ -188,7 +165,7 @@ namespace B32Assembler
             }
         }
 
-        private void InterpretLDX(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretLDX(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
@@ -204,7 +181,7 @@ namespace B32Assembler
             }
         }
 
-        private void InterpretLDB(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretLDB(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
@@ -220,7 +197,7 @@ namespace B32Assembler
             }
         }
 
-        private void InterpretLDY(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretLDY(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
@@ -236,7 +213,7 @@ namespace B32Assembler
             }
         }
 
-        private void InterpretSTA(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretSTA(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == ',')
@@ -262,7 +239,7 @@ namespace B32Assembler
             }
         }
 
-        private void InterpretCMPA(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretCMPA(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
@@ -278,7 +255,7 @@ namespace B32Assembler
             }
         }
 
-        private void InterpretCMPB(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretCMPB(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
@@ -294,7 +271,7 @@ namespace B32Assembler
             }
         }
 
-        private void InterpretCMPX(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretCMPX(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
@@ -310,7 +287,7 @@ namespace B32Assembler
             }
         }
 
-        private void InterpretCMPY(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretCMPY(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
 
             EatWhiteSpaces();
@@ -328,7 +305,7 @@ namespace B32Assembler
 
         }
 
-        private void InterpretCMPD(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretCMPD(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
@@ -344,7 +321,7 @@ namespace B32Assembler
             }
         }
 
-        private void InterpretJMP(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretJMP(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
@@ -362,7 +339,7 @@ namespace B32Assembler
             }
         }
 
-        private void InterpretJEQ(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretJEQ(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
@@ -380,7 +357,7 @@ namespace B32Assembler
             }
         }
 
-        private void InterpretJNE(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretJNE(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
@@ -400,7 +377,7 @@ namespace B32Assembler
 
         }
 
-        private void InterpretJGT(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretJGT(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
@@ -418,7 +395,7 @@ namespace B32Assembler
             }
         }
 
-        private void InterpretJLT(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretJLT(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
@@ -436,7 +413,7 @@ namespace B32Assembler
             }
         }
 
-        private void InterpretINCA(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretINCA(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             if (!IsLabelScan)
             {
@@ -445,7 +422,7 @@ namespace B32Assembler
             AsLength++;
         }
 
-        private void InterpretINCB(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretINCB(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             if (!IsLabelScan)
             {
@@ -454,7 +431,7 @@ namespace B32Assembler
             AsLength++;
         }
 
-        private void InterpretINCX(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretINCX(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             if (!IsLabelScan)
             {
@@ -463,7 +440,7 @@ namespace B32Assembler
             AsLength++;
         }
 
-        private void InterpretINCY(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretINCY(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             if (!IsLabelScan)
             {
@@ -473,7 +450,7 @@ namespace B32Assembler
 
         }
 
-        private void InterpretINCD(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretINCD(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             if (!IsLabelScan)
             {
@@ -482,7 +459,7 @@ namespace B32Assembler
             AsLength++;
         }
 
-        private void InterpretDECA(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretDECA(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             if (!IsLabelScan)
             {
@@ -491,7 +468,7 @@ namespace B32Assembler
             AsLength++;
         }
 
-        private void InterpretDECB(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretDECB(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             if (!IsLabelScan)
             {
@@ -500,7 +477,7 @@ namespace B32Assembler
             AsLength++;
         }
 
-        private void InterpretDECX(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretDECX(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             if (!IsLabelScan)
             {
@@ -509,7 +486,7 @@ namespace B32Assembler
             AsLength++;
         }
 
-        private void InterpretDECY(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretDECY(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             if (!IsLabelScan)
             {
@@ -518,7 +495,7 @@ namespace B32Assembler
             AsLength++;
         }
 
-        private void InterpretDECD(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void InterpretDECD(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             if (!IsLabelScan)
             {
@@ -528,7 +505,7 @@ namespace B32Assembler
 
         }
 
-        private void InterpretADCA(System.IO.BinaryWriter OutputFile, bool
+        private static void InterpretADCA(System.IO.BinaryWriter OutputFile, bool
 IsLabelScan)
         {
             if (!IsLabelScan)
@@ -538,7 +515,7 @@ IsLabelScan)
             AsLength++;
         }
 
-        private void InterpretADCB(System.IO.BinaryWriter OutputFile, bool
+        private static void InterpretADCB(System.IO.BinaryWriter OutputFile, bool
         IsLabelScan)
         {
             if (!IsLabelScan)
@@ -548,7 +525,7 @@ IsLabelScan)
             AsLength++;
         }
 
-        private void InterpretADDA(System.IO.BinaryWriter OutputFile, bool
+        private static void InterpretADDA(System.IO.BinaryWriter OutputFile, bool
         IsLabelScan)
         {
             EatWhiteSpaces();
@@ -567,7 +544,7 @@ IsLabelScan)
             }
         }
 
-        private void InterpretADDB(System.IO.BinaryWriter OutputFile, bool
+        private static void InterpretADDB(System.IO.BinaryWriter OutputFile, bool
         IsLabelScan)
         {
             EatWhiteSpaces();
@@ -586,7 +563,7 @@ IsLabelScan)
             }
         }
 
-        private void InterpretROLB(System.IO.BinaryWriter OutputFile, bool
+        private static void InterpretROLB(System.IO.BinaryWriter OutputFile, bool
         IsLabelScan)
         {
             if (!IsLabelScan)
@@ -596,7 +573,7 @@ IsLabelScan)
             AsLength++;
         }
 
-        private void InterpretROLA(System.IO.BinaryWriter OutputFile, bool
+        private static void InterpretROLA(System.IO.BinaryWriter OutputFile, bool
         IsLabelScan)
         {
             if (!IsLabelScan)
@@ -606,7 +583,7 @@ IsLabelScan)
             AsLength++;
         }
 
-        private void InterpretRORB(System.IO.BinaryWriter OutputFile, bool
+        private static void InterpretRORB(System.IO.BinaryWriter OutputFile, bool
         IsLabelScan)
         {
             if (!IsLabelScan)
@@ -616,7 +593,7 @@ IsLabelScan)
             AsLength++;
         }
 
-        private void InterpretRORA(System.IO.BinaryWriter OutputFile, bool
+        private static void InterpretRORA(System.IO.BinaryWriter OutputFile, bool
         IsLabelScan)
         {
             if (!IsLabelScan)
@@ -626,7 +603,7 @@ IsLabelScan)
             AsLength++;
         }
 
-        private void InterpretADDAB(System.IO.BinaryWriter OutputFile, bool
+        private static void InterpretADDAB(System.IO.BinaryWriter OutputFile, bool
         IsLabelScan)
         {
             if (!IsLabelScan)
@@ -636,7 +613,7 @@ IsLabelScan)
             AsLength++;
         }
 
-        private void DoEnd(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
+        private static void DoEnd(System.IO.BinaryWriter OutputFile, bool IsLabelScan)
         {
             AsLength++;
             if (!IsLabelScan)
@@ -645,7 +622,7 @@ IsLabelScan)
             }
         }
 
-        private Registers ReadRegister()
+        private static Registers ReadRegister()
         {
             Registers r = Registers.Unknown;
 
@@ -669,7 +646,7 @@ IsLabelScan)
             return r;
         }
 
-        private ushort ReadWordValue()
+        private static ushort ReadWordValue()
         {
             ushort val = 0;
             bool IsHex = false;
@@ -704,7 +681,7 @@ IsLabelScan)
             return val;
         }
 
-        private byte ReadByteValue()
+        private static byte ReadByteValue()
         {
             byte val = 0;
             bool IsHex = false;
@@ -734,7 +711,7 @@ IsLabelScan)
             return val;
         }
 
-        private void EatWhiteSpaces()
+        private static void EatWhiteSpaces()
         {
             while (char.IsWhiteSpace(SourceProgram[CurrentNdx]))
             {
@@ -742,7 +719,7 @@ IsLabelScan)
             }
         }
 
-        private string GetLabelName()
+        private static string GetLabelName()
         {
             string lblname = "";
 

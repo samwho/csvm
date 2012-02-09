@@ -23,6 +23,8 @@ namespace B32Machine
         private byte CompareFlag;
         private ushort SpeedMS;
         private byte ProcessorFlags;
+        private MemoryDisplay memory;
+        private B32Assembler.AssemblerForm assembler;
 
         private System.Threading.Thread prog;
         private System.Threading.ManualResetEvent PauseEvent;
@@ -34,7 +36,7 @@ namespace B32Machine
         {
             InitializeComponent();
             prog = null;
-            B32Memory = new byte[65535];
+            B32Memory = new byte[65536];
             StartAddr = 0;
             ExecAddr = 0;
             Register_A = 0;
@@ -45,9 +47,32 @@ namespace B32Machine
             CompareFlag = 0;
             SpeedMS = 0;
             ProcessorFlags = 0;
+
+            // Set the code to a simple "Hello world" at start up
+            this.assemblyCodeBox.Text = "Start: \r\n LDX #$A000 \r\n LDA #72 \r\n STA ,X \r\n INCX \r\n INCX \r\n LDA #101 \r\n STA ,X \r\n INCX \r\n INCX \r\n LDA #108 \r\n STA ,X \r\n INCX \r\n INCX \r\n LDA #108 \r\n STA ,X \r\n INCX \r\n INCX \r\n LDA #111 \r\n STA ,X \r\n INCX \r\n INCX \r\n LDA #32 \r\n STA ,X \r\n INCX \r\n INCX \r\n LDA #119 \r\n STA ,X \r\n INCX \r\n INCX \r\n LDA #111 \r\n STA ,X \r\n INCX \r\n INCX \r\n LDA #114 \r\n STA ,X \r\n INCX \r\n INCX \r\n LDA #108 \r\n STA ,X \r\n INCX \r\n INCX \r\n LDA #100 \r\n STA ,X \r\n INCX \r\n INCX \r\n End Start";
+
+            // Initialise a memory display window
+            memory = new MemoryDisplay();
+            // ThreadSetupScreen will initialise the window with the initial memory state
+            // (all 0s)
+            memory.ThreadSetupScreen();
+            memory.Show();
+
             realTimeNoDelayToolStripMenuItem.Checked = true;
             resumeProgramToolStripMenuItem.Enabled = false;
             pauseProgramToolStripMenuItem.Enabled = true;
+            UpdateRegisterStatus();
+        }
+
+        private void ClearRegisters()
+        {
+            Register_A = 0;
+            Register_B = 0;
+            Register_D = 0;
+            Register_X = 0;
+            Register_Y = 0;
+            CompareFlag = 0;
+            ProcessorFlags = 0;
             UpdateRegisterStatus();
         }
 
@@ -64,7 +89,6 @@ namespace B32Machine
             strRegisters += "\nCompare Flags   = b" + Convert.ToString(CompareFlag, 2).PadLeft(8, '0');
             strRegisters += "\nProcessor Flags = b" + Convert.ToString(ProcessorFlags, 2).PadLeft(8, '0');
 
-            //this.lblRegisters.Text = strRegisters;
             if (lblRegisters.InvokeRequired)
             {
                 SetTextCallback z = new SetTextCallback(SetRegisterText);
@@ -78,12 +102,18 @@ namespace B32Machine
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            DialogResult dr = openFileDialog1.ShowDialog();
+            if (dr == DialogResult.Cancel) return;
+
+            RunProgram(openFileDialog1.FileName);
+        }
+
+        public void RunProgram(string filename)
+        {
+            ClearRegisters();
             byte Magic1;
             byte Magic2;
             byte Magic3;
-
-            DialogResult dr = openFileDialog1.ShowDialog();
-            if (dr == DialogResult.Cancel) return;
 
             lock (b32Screen1)
             {
@@ -91,7 +121,7 @@ namespace B32Machine
             }
 
             System.IO.BinaryReader br;
-            System.IO.FileStream fs = new System.IO.FileStream(openFileDialog1.FileName, System.IO.FileMode.Open);
+            System.IO.FileStream fs = new System.IO.FileStream(filename, System.IO.FileMode.Open);
 
             br = new System.IO.BinaryReader(fs);
 
@@ -110,7 +140,9 @@ namespace B32Machine
             ushort Counter = 0;
             while ((br.PeekChar() != -1))
             {
-                B32Memory[(StartAddr + Counter)] = br.ReadByte();
+                byte read = br.ReadByte();
+                B32Memory[(StartAddr + Counter)] = read;
+                memory.ThreadPoke((ushort)(StartAddr + Counter), read);
                 Counter++;
             }
 
@@ -222,6 +254,7 @@ namespace B32Machine
                     ThreadPoke(Register_X, Register_A);
                     InstructionPointer++;
                     UpdateRegisterStatus();
+                    memory.ThreadPoke(Register_X, Register_A);
 
                     continue;
                 }
@@ -883,7 +916,30 @@ namespace B32Machine
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             // Kill the program running thread when closing the window.
-            this.prog.Abort();
+            if (this.prog != null)
+            {
+                this.prog.Abort();
+            }
+
+            this.memory.Dispose();
+        }
+
+        private void memoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.memory.Show();
+        }
+
+        private void assembleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.assembler = new B32Assembler.AssemblerForm();
+            this.assembler.Show();
+        }
+
+        private void runButton_Click(object sender, EventArgs e)
+        {
+            System.IO.File.WriteAllText("temp.asm", this.assemblyCodeBox.Text);
+            B32Assembler.Assembler.Assemble("temp.asm", "temp.B32", "1000");
+            RunProgram("temp.B32");
         }
     }
 }

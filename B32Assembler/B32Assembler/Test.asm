@@ -1,8 +1,0 @@
-﻿START:
- LDA #65
- LDX #$A000
- STA ,X
- END START
- LDA #66
- LDX #$A002
- STA ,X

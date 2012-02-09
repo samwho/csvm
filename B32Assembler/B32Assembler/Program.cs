@@ -15,7 +15,7 @@ namespace B32Assembler
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmMainForm());
+            Application.Run(new AssemblerForm());
         }
     }
 }

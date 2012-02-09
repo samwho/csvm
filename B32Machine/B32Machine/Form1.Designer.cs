@@ -31,6 +31,9 @@
             this.msMainMenu = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.assembleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.memoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.speedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mS14SecondToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mS12SecondToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,6 +50,9 @@
             this.lblRegisters = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.b32Screen1 = new B32Machine.B32Screen();
+            this.assemblyCodeBox = new System.Windows.Forms.TextBox();
+            this.runButton = new System.Windows.Forms.Button();
+            this.saveButton = new System.Windows.Forms.Button();
             this.msMainMenu.SuspendLayout();
             this.pnlRegisters.SuspendLayout();
             this.SuspendLayout();
@@ -55,20 +61,22 @@
             // 
             this.msMainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.viewToolStripMenuItem,
             this.speedToolStripMenuItem,
             this.pauseProgramToolStripMenuItem,
             this.resumeProgramToolStripMenuItem,
             this.restartToolStripMenuItem});
             this.msMainMenu.Location = new System.Drawing.Point(0, 0);
             this.msMainMenu.Name = "msMainMenu";
-            this.msMainMenu.Size = new System.Drawing.Size(874, 24);
+            this.msMainMenu.Size = new System.Drawing.Size(1155, 24);
             this.msMainMenu.TabIndex = 1;
             this.msMainMenu.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openToolStripMenuItem});
+            this.openToolStripMenuItem,
+            this.assembleToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -76,9 +84,31 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.openToolStripMenuItem.Text = "Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // assembleToolStripMenuItem
+            // 
+            this.assembleToolStripMenuItem.Name = "assembleToolStripMenuItem";
+            this.assembleToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.assembleToolStripMenuItem.Text = "Assemble...";
+            this.assembleToolStripMenuItem.Click += new System.EventHandler(this.assembleToolStripMenuItem_Click);
+            // 
+            // viewToolStripMenuItem
+            // 
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.memoryToolStripMenuItem});
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.viewToolStripMenuItem.Text = "View";
+            // 
+            // memoryToolStripMenuItem
+            // 
+            this.memoryToolStripMenuItem.Name = "memoryToolStripMenuItem";
+            this.memoryToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.memoryToolStripMenuItem.Text = "Memory";
+            this.memoryToolStripMenuItem.Click += new System.EventHandler(this.memoryToolStripMenuItem_Click);
             // 
             // speedToolStripMenuItem
             // 
@@ -198,7 +228,6 @@
             // b32Screen1
             // 
             this.b32Screen1.BackColor = System.Drawing.Color.Black;
-            this.b32Screen1.Dock = System.Windows.Forms.DockStyle.Right;
             this.b32Screen1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.b32Screen1.Location = new System.Drawing.Point(231, 24);
             this.b32Screen1.Name = "b32Screen1";
@@ -206,11 +235,42 @@
             this.b32Screen1.Size = new System.Drawing.Size(643, 564);
             this.b32Screen1.TabIndex = 0;
             // 
+            // assemblyCodeBox
+            // 
+            this.assemblyCodeBox.Location = new System.Drawing.Point(880, 27);
+            this.assemblyCodeBox.Multiline = true;
+            this.assemblyCodeBox.Name = "assemblyCodeBox";
+            this.assemblyCodeBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.assemblyCodeBox.Size = new System.Drawing.Size(275, 520);
+            this.assemblyCodeBox.TabIndex = 3;
+            // 
+            // runButton
+            // 
+            this.runButton.Location = new System.Drawing.Point(880, 553);
+            this.runButton.Name = "runButton";
+            this.runButton.Size = new System.Drawing.Size(137, 23);
+            this.runButton.TabIndex = 4;
+            this.runButton.Text = "Run";
+            this.runButton.UseVisualStyleBackColor = true;
+            this.runButton.Click += new System.EventHandler(this.runButton_Click);
+            // 
+            // saveButton
+            // 
+            this.saveButton.Location = new System.Drawing.Point(1023, 553);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(120, 23);
+            this.saveButton.TabIndex = 5;
+            this.saveButton.Text = "Save";
+            this.saveButton.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(874, 588);
+            this.ClientSize = new System.Drawing.Size(1155, 588);
+            this.Controls.Add(this.saveButton);
+            this.Controls.Add(this.runButton);
+            this.Controls.Add(this.assemblyCodeBox);
             this.Controls.Add(this.pnlRegisters);
             this.Controls.Add(this.b32Screen1);
             this.Controls.Add(this.msMainMenu);
@@ -247,6 +307,12 @@
         private System.Windows.Forms.ToolStripMenuItem pauseProgramToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem resumeProgramToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem restartToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem memoryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem assembleToolStripMenuItem;
+        private System.Windows.Forms.TextBox assemblyCodeBox;
+        private System.Windows.Forms.Button runButton;
+        private System.Windows.Forms.Button saveButton;
     }
 }
 

@@ -1,0 +1,47 @@
+Start: 
+ LDX #$A000 
+ LDA #72 
+ STA ,X 
+ INCX 
+ INCX 
+ LDA #101 
+ STA ,X 
+ INCX 
+ INCX 
+ LDA #108 
+ STA ,X 
+ INCX 
+ INCX 
+ LDA #108 
+ STA ,X 
+ INCX 
+ INCX 
+ LDA #111 
+ STA ,X 
+ INCX 
+ INCX 
+ LDA #32 
+ STA ,X 
+ INCX 
+ INCX 
+ LDA #119 
+ STA ,X 
+ INCX 
+ INCX 
+ LDA #111 
+ STA ,X 
+ INCX 
+ INCX 
+ LDA #114 
+ STA ,X 
+ INCX 
+ INCX 
+ LDA #108 
+ STA ,X 
+ INCX 
+ INCX 
+ LDA #100 
+ STA ,X 
+ INCX 
+ INCX 
+ End Start
