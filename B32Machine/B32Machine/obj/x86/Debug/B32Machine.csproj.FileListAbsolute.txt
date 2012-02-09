@@ -1,0 +1,12 @@
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Machine\B32Machine\bin\Debug\B32Machine.exe
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Machine\B32Machine\bin\Debug\B32Machine.pdb
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Machine\B32Machine\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Machine\B32Machine\obj\x86\Debug\B32Machine.B32Screen.resources
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Machine\B32Machine\obj\x86\Debug\B32Machine.MainForm.resources
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Machine\B32Machine\obj\x86\Debug\B32Machine.Properties.Resources.resources
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Machine\B32Machine\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Machine\B32Machine\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Machine\B32Machine\obj\x86\Debug\B32Machine.exe
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Machine\B32Machine\obj\x86\Debug\B32Machine.pdb
+C:\Users\Sam\Documents\My Dropbox\Code\C#\B32\B32Machine\B32Machine\obj\x86\Debug\B32Machine.exe
+C:\Users\Sam\Documents\My Dropbox\Code\C#\B32\B32Machine\B32Machine\obj\x86\Debug\B32Machine.pdb

@@ -1,0 +1,13 @@
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Assembler\B32Assembler\bin\Debug\B32Assembler.exe
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Assembler\B32Assembler\bin\Debug\B32Assembler.pdb
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Assembler\B32Assembler\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Assembler\B32Assembler\obj\x86\Debug\B32Assembler.frmMainForm.resources
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Assembler\B32Assembler\obj\x86\Debug\B32Assembler.Properties.Resources.resources
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Assembler\B32Assembler\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Assembler\B32Assembler\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Assembler\B32Assembler\obj\x86\Debug\B32Assembler.exe
+C:\Users\Sam\Documents\My Dropbox\Code\F#\B32Assembler\B32Assembler\obj\x86\Debug\B32Assembler.pdb
+C:\Users\Sam\Documents\My Dropbox\Code\C#\B32Assembler\B32Assembler\obj\x86\Debug\B32Assembler.exe
+C:\Users\Sam\Documents\My Dropbox\Code\C#\B32Assembler\B32Assembler\obj\x86\Debug\B32Assembler.pdb
+C:\Users\Sam\Documents\My Dropbox\Code\C#\B32\B32Assembler\B32Assembler\obj\x86\Debug\B32Assembler.exe
+C:\Users\Sam\Documents\My Dropbox\Code\C#\B32\B32Assembler\B32Assembler\obj\x86\Debug\B32Assembler.pdb
